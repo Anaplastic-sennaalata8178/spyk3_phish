@@ -1,0 +1,33 @@
+# Core dependencies
+cryptography>=41.0.0
+requests>=2.31.0
+psutil>=5.9.0
+colorama>=0.4.6
+
+# SSH Support
+paramiko>=3.3.0
+
+# Network scanning
+python-nmap>=0.7.1
+python-whois>=0.8.0
+scapy>=2.5.0
+
+# Social Engineering
+qrcode[pil]>=7.4.0
+pyshorteners>=1.0.1
+
+# Bot integrations
+discord.py>=2.3.0
+telethon>=1.34.0
+slack-sdk>=3.23.0
+
+# WhatsApp support
+selenium>=4.15.0
+webdriver-manager>=4.0.1
+
+# Additional utilities
+aiohttp>=3.9.0
+asyncio>=3.4.3
+pyOpenSSL>=23.2.0
+dnspython>=2.4.0
+netifaces>=0.11.0

@@ -1,0 +1,75 @@
+# Alpine-based Dockerfile for SPYK3-PHISH
+FROM alpine:3.19
+
+LABEL maintainer="Ian Carter Kulani" \
+      version="11.0.0" \
+      description="SPYK3-PHISH - Ultimate Cybersecurity & Phishing Command Center"
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    py3-cryptography \
+    bash \
+    nmap \
+    nikto \
+    bind-tools \
+    traceroute \
+    openssh-client \
+    curl \
+    wget \
+    tcpdump \
+    libpcap \
+    chromium \
+    chromium-chromedriver \
+    sudo \
+    iputils \
+    net-tools \
+    iptables \
+    git \
+    build-base \
+    python3-dev \
+    libffi-dev \
+    openssl-dev \
+    cargo
+
+# Create application directory
+WORKDIR /app
+
+# Copy requirements first (better caching)
+COPY requirements.txt .
+
+# Upgrade pip and install Python packages
+RUN pip3 install --no-cache-dir --upgrade pip && \
+    pip3 install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY spyk3_phish.py .
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p .spyk3_phish reports && \
+    chmod -R 755 /app
+
+# Create non-root user
+RUN addgroup -g 1000 spyk3 && \
+    adduser -D -u 1000 -G spyk3 spyk3 && \
+    chown -R spyk3:spyk3 /app
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/usr/local/bin:${PATH}"
+
+# Switch to non-root user
+USER spyk3
+
+# Expose ports
+EXPOSE 8080 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD python3 -c "import socket; s=socket.socket(); s.connect(('localhost', 8080))" || exit 1
+
+# Entry point
+ENTRYPOINT ["python3", "spyk3_phish.py"]

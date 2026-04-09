@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  spyk3-phish:
+    build: .
+    container_name: spyk3-phish
+    hostname: spyk3-phish
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  # Phishing server
+      - "2222:22"    # SSH alternative port
+    volumes:
+      - spyk3_data:/app/.spyk3_phish
+      - spyk3_reports:/app/reports
+      - spyk3_wordlists:/app/.spyk3_phish/wordlists
+      - spyk3_templates:/app/.spyk3_phish/phishing_templates
+    environment:
+      - TZ=UTC
+      - SPYK3_MODE=production
+      - SPYK3_LOG_LEVEL=INFO
+    networks:
+      - spyk3_network
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    security_opt:
+      - seccomp:unconfined
+    stdin_open: true
+    tty: true
+
+  spyk3-phish-dev:
+    build: 
+      context: .
+      target: builder
+    container_name: spyk3-phish-dev
+    hostname: spyk3-phish-dev
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    volumes:
+      - .:/app
+      - spyk3_dev_data:/app/.spyk3_phish
+    environment:
+      - TZ=UTC
+      - SPYK3_MODE=development
+      - SPYK3_LOG_LEVEL=DEBUG
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    stdin_open: true
+    tty: true
+    command: python3 spyk3_phish.py
+
+volumes:
+  spyk3_data:
+  spyk3_reports:
+  spyk3_wordlists:
+  spyk3_templates:
+  spyk3_dev_data:
+
+networks:
+  spyk3_network:
+    driver: bridge

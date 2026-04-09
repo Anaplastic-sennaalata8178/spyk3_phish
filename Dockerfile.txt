@@ -1,0 +1,88 @@
+# Multi-stage build for SPYK3-PHISH
+FROM alpine:3.19 AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    python3-dev \
+    py3-pip \
+    py3-cryptography \
+    py3-numpy \
+    gcc \
+    musl-dev \
+    linux-headers \
+    libpcap-dev \
+    tcpdump \
+    nmap \
+    nikto \
+    bind-tools \
+    traceroute \
+    openssh-client \
+    curl \
+    wget
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python packages
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Final stage
+FROM alpine:3.19
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    libpcap \
+    tcpdump \
+    nmap \
+    nikto \
+    bind-tools \
+    traceroute \
+    openssh-client \
+    curl \
+    wget \
+    chromium \
+    chromium-chromedriver \
+    sudo \
+    bash
+
+# Create non-root user
+RUN addgroup -g 1000 spyk3 && \
+    adduser -D -u 1000 -G spyk3 spyk3 && \
+    echo "spyk3 ALL=(ALL) NOPASSWD: /sbin/iptables, /usr/sbin/iptables" >> /etc/sudoers
+
+# Create necessary directories
+RUN mkdir -p /app/.spyk3_phish && \
+    chown -R spyk3:spyk3 /app
+
+WORKDIR /app
+
+# Copy application files
+COPY --chown=spyk3:spyk3 . .
+
+# Copy Python packages from builder
+COPY --from=builder /usr/lib/python3.11/site-packages /usr/lib/python3.11/site-packages
+COPY --from=builder /usr/bin /usr/bin
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PATH="/usr/local/bin:${PATH}"
+
+# Switch to non-root user
+USER spyk3
+
+# Expose ports
+EXPOSE 8080 22 80 443
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python3 -c "import socket; socket.socket().connect(('localhost', 8080))" || exit 1
+
+# Entry point
+ENTRYPOINT ["python3", "spyk3_phish.py"]

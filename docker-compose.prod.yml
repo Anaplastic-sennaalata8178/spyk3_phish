@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  spyk3-phish:
+    image: ${CI_REGISTRY_IMAGE}:latest
+    container_name: spyk3-phish
+    restart: always
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - spyk3_data:/app/.spyk3_phish
+      - spyk3_reports:/app/reports
+      - spyk3_logs:/app/.spyk3_phish/logs
+    environment:
+      - TZ=${TZ:-UTC}
+      - SPYK3_MODE=production
+      - SPYK3_LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - SPYK3_DISCORD_TOKEN=${DISCORD_TOKEN}
+      - SPYK3_TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - SPYK3_SLACK_TOKEN=${SLACK_TOKEN}
+    networks:
+      - spyk3_network
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  spyk3-redis:
+    image: redis:7-alpine
+    container_name: spyk3-redis
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - spyk3_network
+
+  spyk3-postgres:
+    image: postgres:15-alpine
+    container_name: spyk3-postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=spyk3
+      - POSTGRES_USER=spyk3
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - spyk3_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: spyk3-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - spyk3-phish
+    networks:
+      - spyk3_network
+
+volumes:
+  spyk3_data:
+  spyk3_reports:
+  spyk3_logs:
+  redis_data:
+  postgres_data:
+
+networks:
+  spyk3_network:
+    driver: bridge

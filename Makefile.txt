@@ -1,0 +1,126 @@
+# SPYK3-PHISH Makefile
+.PHONY: help install run clean test docker-build docker-run docker-stop
+
+# Colors
+GREEN := \033[0;32m
+RED := \033[0;31m
+YELLOW := \033[1;33m
+RESET := \033[0m
+
+# Variables
+PYTHON := python3
+VENV := venv
+VENV_BIN := $(VENV)/bin
+DOCKER_IMAGE := spyk3-phish
+DOCKER_TAG := latest
+
+help:
+	@echo "$(GREEN)SPYK3-PHISH Makefile$(RESET)"
+	@echo ""
+	@echo "$(YELLOW)Available targets:$(RESET)"
+	@echo "  install     - Install dependencies and setup environment"
+	@echo "  run         - Run SPYK3-PHISH"
+	@echo "  clean       - Clean up temporary files"
+	@echo "  test        - Run tests"
+	@echo "  docker-build - Build Docker image"
+	@echo "  docker-run  - Run Docker container"
+	@echo "  docker-stop - Stop Docker container"
+	@echo "  docker-clean - Remove Docker containers and images"
+
+install:
+	@echo "$(GREEN)Installing SPYK3-PHISH...$(RESET)"
+	@chmod +x install.sh
+	@./install.sh
+
+run:
+	@echo "$(GREEN)Starting SPYK3-PHISH...$(RESET)"
+	@if [ -d "$(VENV)" ]; then \
+		source $(VENV_BIN)/activate && python3 spyk3_phish.py; \
+	else \
+		$(PYTHON) spyk3_phish.py; \
+	fi
+
+clean:
+	@echo "$(YELLOW)Cleaning up...$(RESET)"
+	@rm -rf $(VENV)
+	@rm -rf __pycache__
+	@rm -rf .pytest_cache
+	@rm -rf .coverage
+	@rm -rf htmlcov
+	@rm -rf *.pyc
+	@rm -rf .spyk3_phish/*.db
+	@rm -rf reports/*.txt
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@echo "$(GREEN)Cleanup complete$(RESET)"
+
+test:
+	@echo "$(GREEN)Running tests...$(RESET)"
+	@if [ -d "$(VENV)" ]; then \
+		source $(VENV_BIN)/activate && python3 -m pytest tests/ -v --cov=. --cov-report=html; \
+	else \
+		$(PYTHON) -m pytest tests/ -v --cov=. --cov-report=html; \
+	fi
+
+docker-build:
+	@echo "$(GREEN)Building Docker image...$(RESET)"
+	@docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) -f Dockerfile.alpine .
+
+docker-run:
+	@echo "$(GREEN)Running Docker container...$(RESET)"
+	@docker run -it --rm \
+		--name spyk3-phish \
+		-p 8080:8080 \
+		-v $(PWD)/.spyk3_phish:/app/.spyk3_phish \
+		--cap-add=NET_ADMIN \
+		--cap-add=NET_RAW \
+		$(DOCKER_IMAGE):$(DOCKER_TAG)
+
+docker-compose-up:
+	@echo "$(GREEN)Starting with Docker Compose...$(RESET)"
+	@docker-compose up -d
+
+docker-compose-down:
+	@echo "$(YELLOW)Stopping Docker Compose...$(RESET)"
+	@docker-compose down
+
+docker-stop:
+	@echo "$(YELLOW)Stopping Docker container...$(RESET)"
+	@docker stop spyk3-phish 2>/dev/null || true
+	@docker rm spyk3-phish 2>/dev/null || true
+
+docker-clean:
+	@echo "$(YELLOW)Removing Docker containers and images...$(RESET)"
+	@docker stop spyk3-phish 2>/dev/null || true
+	@docker rm spyk3-phish 2>/dev/null || true
+	@docker rmi $(DOCKER_IMAGE):$(DOCKER_TAG) 2>/dev/null || true
+	@docker system prune -f
+
+dev:
+	@echo "$(GREEN)Starting development environment...$(RESET)"
+	@if [ ! -d "$(VENV)" ]; then \
+		$(PYTHON) -m venv $(VENV); \
+		source $(VENV_BIN)/activate; \
+		pip install --upgrade pip; \
+		pip install -r requirements.txt; \
+	fi
+	@source $(VENV_BIN)/activate && python3 spyk3_phish.py
+
+lint:
+	@echo "$(GREEN)Running linter...$(RESET)"
+	@if [ -d "$(VENV)" ]; then \
+		source $(VENV_BIN)/activate && flake8 spyk3_phish.py --max-line-length=120; \
+	else \
+		$(PYTHON) -m flake8 spyk3_phish.py --max-line-length=120; \
+	fi
+
+security:
+	@echo "$(GREEN)Running security scan...$(RESET)"
+	@if [ -d "$(VENV)" ]; then \
+		source $(VENV_BIN)/activate && bandit -r . -f json -o bandit-report.json; \
+		safety check; \
+	else \
+		$(PYTHON) -m bandit -r . -f json -o bandit-report.json; \
+		$(PYTHON) -m safety check; \
+	fi
+
+.PHONY: help install run clean test docker-build docker-run docker-stop docker-clean dev lint security
